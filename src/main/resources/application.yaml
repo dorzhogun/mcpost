@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: server
   application:
     name: post
   datasource:
@@ -9,6 +9,7 @@ spring:
     password: postgres
   liquibase:
     enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
   kafka:
     bootstrap-servers: 89.104.68.220:9094
 
@@ -16,8 +17,8 @@ app:
   kafka:
     notificationTopic: "notification-top"
     kafkaMessageGroupId: "kafka-message-group-id"
-  auth:
-    validate-url: "http://89.104.68.220:8081/api/v1/auth/getclaims"
+  request-validation:
+    validator-path: "http://89.104.68.220:8081/api/v1/auth/getclaims"
 
 eureka:
   instance:
@@ -25,6 +26,7 @@ eureka:
   client:
     service-url:
       defaultZone: http://89.104.68.220:8761/eureka
+    enabled: true
 
 server:
-  port: 8080
+  port: 8091
