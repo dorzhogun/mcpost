@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+
+  database:
+    image: postgres:12.3
+    container_name: post_db
+    environment:
+      POSTGRES_PASSWORD: postgres
+    restart: always
+
+  app:
+    image: openjdk:17
+    container_name: post
+    links:
+      - database
+    volumes:
+      - ../target/post-0.0.1-SNAPSHOT.jar:/post/app.jar
+      - ../photo/post/photo
+    command: /usr/java/openjdk-21/bin/java -jar /post/app.jar
+    depends_on:
+      - database

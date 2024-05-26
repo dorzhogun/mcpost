@@ -1,19 +1,30 @@
 spring:
+  profiles:
+    active: local
   application:
-    name: post-service
+    name: post
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB_URL:jdbc:postgresql://89.104.68.220:5432/post_db}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASS:Psql7355}
-    hikari:
-      schema: post_schema
-      connection-init-sql: CREATE SCHEMA IF NOT EXISTS post_schema
-      connection-timeout: 10000
-server:
-  port: 8888
-eureka:
-  client:
-    serviceUrl:
-      defaultZone:  ${EUREKA_URI:http://89.104.68.220:8761/eureka/}
+    username: postgres
+    password: postgres
+  liquibase:
     enabled: true
+  kafka:
+    bootstrap-servers: 89.104.68.220:9094
+
+app:
+  kafka:
+    notificationTopic: "notification-top"
+    kafkaMessageGroupId: "kafka-message-group-id"
+  auth:
+    validate-url: "http://89.104.68.220:8081/api/v1/auth/getclaims"
+
+eureka:
+  instance:
+    hostname: 89.104.68.220
+  client:
+    service-url:
+      defaultZone: http://89.104.68.220:8761/eureka
+
+server:
+  port: 8080

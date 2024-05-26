@@ -1,4 +1,4 @@
-package com.example.mcpost.services;
+package com.example.mcpost.service;
 
 import com.example.mcpost.config.MvcConfig;
 import com.example.mcpost.dto.*;
@@ -14,10 +14,10 @@ import com.example.mcpost.model.Post;
 import com.example.mcpost.model.PostLike;
 import com.example.mcpost.model.enums.PostType;
 import com.example.mcpost.model.enums.ReactionType;
-import com.example.mcpost.repositories.CommentLikeRepository;
-import com.example.mcpost.repositories.CommentRepository;
-import com.example.mcpost.repositories.PostLikeRepository;
-import com.example.mcpost.repositories.PostRepository;
+import com.example.mcpost.repository.CommentLikeRepository;
+import com.example.mcpost.repository.CommentRepository;
+import com.example.mcpost.repository.PostLikeRepository;
+import com.example.mcpost.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

@@ -1,4 +1,4 @@
-package com.example.mcpost.repositories;
+package com.example.mcpost.repository;
 
 import com.example.mcpost.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;

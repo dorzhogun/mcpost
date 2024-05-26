@@ -25,6 +25,5 @@ public class MvcConfig implements WebMvcConfigurer {
         path = path.substring(0, path.indexOf(slash, path.indexOf(appName)));
         String uri = Paths.get(path).toUri().toString();
         registry.addResourceHandler("/photo/**").addResourceLocations(uri + "/photo/");
-        registry.addResourceHandler("/**").addResourceLocations(uri + "/dist/");
     }
 }

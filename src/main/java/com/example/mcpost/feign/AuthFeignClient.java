@@ -5,8 +5,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Map;
+
 @FeignClient(name = "auth", url = "${app.request-validation.validator-path}")
 public interface AuthFeignClient {
     @PostMapping
-    Boolean validate(@RequestBody ValidateJwtTokenRq request);
+    Map<String, String> validateToken(@RequestBody ValidateJwtTokenRq request);
 }

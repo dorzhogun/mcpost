@@ -2,7 +2,7 @@ package com.example.mcpost.controller;
 
 import com.example.mcpost.dto.*;
 import com.example.mcpost.dto.criteria.PostSearchCriteria;
-import com.example.mcpost.services.PostService;
+import com.example.mcpost.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
