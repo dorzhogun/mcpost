@@ -30,7 +30,7 @@ databaseChangeLog:
                   name: publish_date
                   type: timestamp with time zone
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: image_path
                   type: varchar(255)
