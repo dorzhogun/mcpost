@@ -102,7 +102,7 @@ databaseChangeLog:
                   name: parent_id
                   type: bigint
                   constraints:
-                    nullable: false
+                    nullable: true
               - column:
                   name: is_blocked
                   type: boolean
@@ -237,3 +237,23 @@ databaseChangeLog:
                   type: varchar(255)
                   constraints:
                     nullable: false
+
+        - createTable:
+            tableName: post_tags
+            columns:
+              - column:
+                  name: post_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: post_tags_fk
+                    referencedTableName: posts
+                    referencedColumnName: id
+                    nullable: true
+              - column:
+                  name: tag_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: tag_posts_fk
+                    referencedTableName: tags
+                    referencedColumnName: id
+                    nullable: true

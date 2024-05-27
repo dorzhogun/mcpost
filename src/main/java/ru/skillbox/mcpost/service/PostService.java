@@ -133,8 +133,10 @@ public class PostService {
         UUID principalId = UUID.fromString(principal.getName());
         PostLike like = postLikeRepository.findByPostIdAndAuthorId(postId, principalId)
                 .orElse(
-                        PostLike.builder().authorId(principalId)
+                        PostLike.builder()
+                                .authorId(principalId)
                                 .postId(postId)
+                                .isDeleted(false)
                                 .build()
                 );
         like.setReactionType(ReactionType.valueOf(likeDto.getReactionType().toUpperCase()));
@@ -188,6 +190,7 @@ public class PostService {
                         CommentLike.builder()
                                 .commentId(commentId)
                                 .authorId(authorId)
+                                .isDeleted(false)
                                 .build()
                 );
         commentLike.setReactionType(ReactionType.HEART);

@@ -28,5 +28,7 @@ public class PostLike {
     private ReactionType reactionType;
     @Column(name = "post_id")
     private Long postId;
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 }
 

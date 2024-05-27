@@ -29,8 +29,8 @@ public class Post {
     @ManyToMany
     @JoinTable(
             name = "post_tags",
-            joinColumns = @JoinColumn(name = "posts_id"),
-            inverseJoinColumns = @JoinColumn(name = "tags_id")
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
     private LocalDateTime time;
