@@ -1,27 +1,36 @@
 package ru.skillbox.mcpost.config.security;
 
-import ru.skillbox.mcpost.dto.ValidateJwtTokenRq;
-import ru.skillbox.mcpost.feign.AuthFeignClient;
 import feign.FeignException;
-import jakarta.servlet.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+import ru.skillbox.mcpost.dto.JwtRq;
+import ru.skillbox.mcpost.feign.PostFeignClient;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 
+@Getter
+@Setter
 @Component
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TokenFilter extends GenericFilterBean {
-    private final AuthFeignClient feignClient;
+
+    @Autowired
+    private PostFeignClient feignClient;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
@@ -36,14 +45,16 @@ public class TokenFilter extends GenericFilterBean {
                 new TokenAuthentication(null, false, null);
         if (token != null) {
             try {
-                Map<String, String> claims = feignClient.validateToken(new ValidateJwtTokenRq(token));
+                Map<String, String> tokenPayload = feignClient.validateToken(new JwtRq(token));
                 authentication = new TokenAuthentication(
-                        List.of(() -> claims.get("authorities")),
+                        Arrays.stream(tokenPayload.get("authorities").split(","))
+                                .map(authority -> (GrantedAuthority) () -> authority)
+                                .toList(),
                         true,
-                        claims.get("principal")
+                        tokenPayload.get("principal")
                 );
             } catch (FeignException e) {
-                log.info("Token {} не валиден", token);
+                log.info("ошибка валидации токена");
             }
         }
         return authentication;
@@ -57,3 +68,4 @@ public class TokenFilter extends GenericFilterBean {
         return null;
     }
 }
+

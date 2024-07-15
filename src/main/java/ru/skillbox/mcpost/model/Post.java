@@ -1,17 +1,21 @@
 package ru.skillbox.mcpost.model;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import ru.skillbox.mcpost.model.enums.PostType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "posts")
 public class Post {
     @Id
@@ -19,11 +23,12 @@ public class Post {
     private Long id;
     @Column(name = "author_id")
     private UUID authorId;
+    @Column(name = "title")
     private String title;
     @Column(name = "post_text")
     private String postText;
     @Column(name = "publish_date")
-    private LocalDateTime publishDate;
+    private Instant publishDate;
     @Column(name = "image_path")
     private String imagePath;
     @ManyToMany
@@ -33,9 +38,10 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
-    private LocalDateTime time;
+    @Column(name = "time")
+    private Instant time;
     @Column(name = "time_changed")
-    private LocalDateTime timeChanged;
+    private Instant timeChanged;
     @Enumerated(EnumType.STRING)
     private PostType type;
     @Column(name = "is_blocked")
@@ -55,5 +61,4 @@ public class Post {
     )
     private List<Comment> comments;
 }
-
 

@@ -12,15 +12,12 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostsRs {
-    @JsonProperty("totalPages")
-    private Integer totalPages;
+public class AccountRs {
     @JsonProperty("totalElements")
     private Long totalElements;
-    @JsonProperty("number")
-    private Integer number;
-    @JsonProperty("size")
-    private Integer size;
+    @JsonProperty("totalPages")
+    private Integer totalPages;
     @JsonProperty("content")
-    private List<PostDto> content;
+    private List<AccountDto> content;
 }
+

@@ -14,11 +14,27 @@ public interface PostMapper {
     Post toEntity(PostDto postDto);
     @Mapping(
             target = "likeAmount",
-            expression = "java(post.getLikes() != null ? post.getLikes().size() : 0)"
+            expression = "java(" +
+                    "post.getLikes() != null ? " +
+                    "post.getLikes()" +
+                    ".stream()" +
+                    ".filter(like -> !like.getIsDeleted())" +
+                    ".toList()" +
+                    ".size() " +
+                    ": 0" +
+                    ")"
     )
     @Mapping(
             target = "commentsCount",
-            expression = "java(post.getComments() != null ? post.getComments().size() : 0)"
+            expression = "java(" +
+                    "post.getComments() != null ? " +
+                    "post.getComments()" +
+                    ".stream()" +
+                    ".filter(comment -> !comment.getIsDeleted())" +
+                    ".toList()" +
+                    ".size() " +
+                    ": 0" +
+                    ")"
     )
     PostDto toDto(Post post);
     List<PostDto> toDtoList(List<Post> posts);

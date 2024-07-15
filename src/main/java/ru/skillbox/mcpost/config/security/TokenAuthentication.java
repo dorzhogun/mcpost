@@ -1,7 +1,6 @@
 package ru.skillbox.mcpost.config.security;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,12 +8,11 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class TokenAuthentication implements Authentication {
-    private final List<GrantedAuthority> authorities;
-    private final boolean authenticated;
-    @Getter
-    private final String account;
+    private List<GrantedAuthority> authorities;
+    private boolean authenticated;
+    private String account;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -43,6 +41,7 @@ public class TokenAuthentication implements Authentication {
 
     @Override
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+        this.authenticated = isAuthenticated;
     }
 
     @Override
@@ -50,4 +49,3 @@ public class TokenAuthentication implements Authentication {
         return account;
     }
 }
-

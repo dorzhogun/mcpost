@@ -1,0 +1,14 @@
+{
+  "id" : 4,
+  "commentType" : "POST",
+  "time" : "2024-06-04T12:57:36Z",
+  "timeChanged" : "2024-06-04T12:57:36Z",
+  "authorId" : "7099e6e4-f0b9-4aa6-a263-05e7eeae1604",
+  "parentId" : null,
+  "commentText" : "Comment_to_post",
+  "postId" : 1,
+  "isBlocked" : false,
+  "isDeleted" : false,
+  "likeAmount" : 0,
+  "commentsCount" : 0
+}

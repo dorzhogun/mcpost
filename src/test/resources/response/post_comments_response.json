@@ -1,0 +1,22 @@
+{
+  "totalPages": 1,
+  "totalElements": 1,
+  "number": 0,
+  "size": 5,
+  "content": [
+    {
+      "id" : 1,
+      "commentType" : "POST",
+      "time" : "2024-06-04T12:52:36Z",
+      "timeChanged" : "2024-06-04T12:52:36Z",
+      "authorId" : "f4d5539c-ed78-4817-be12-b1bdf80040a3",
+      "parentId" : null,
+      "commentText" : "comment_text1",
+      "postId" : 1,
+      "isBlocked" : false,
+      "isDeleted" : false,
+      "likeAmount" : 1,
+      "commentsCount" : 1
+    }
+  ]
+}

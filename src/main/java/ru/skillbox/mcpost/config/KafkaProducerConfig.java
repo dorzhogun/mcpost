@@ -24,7 +24,7 @@ public class KafkaProducerConfig {
     private String kafkaMessageGroupId;
 
     @Bean
-    public ProducerFactory<String, NotificationEvent> dialogEventProducerFactory(ObjectMapper mapper) {
+    public ProducerFactory<String, NotificationEvent> postEventProducerFactory(ObjectMapper mapper) {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -36,8 +36,8 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, NotificationEvent> kafkaTemplate(ProducerFactory<String, NotificationEvent> dialogEventProducerFactory) {
-        return new KafkaTemplate<>(dialogEventProducerFactory);
+    public KafkaTemplate<String, NotificationEvent> kafkaTemplate(ProducerFactory<String, NotificationEvent> postEventProducerFactory) {
+        return new KafkaTemplate<>(postEventProducerFactory);
     }
 }
 

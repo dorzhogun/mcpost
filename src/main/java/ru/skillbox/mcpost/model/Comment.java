@@ -3,7 +3,7 @@ package ru.skillbox.mcpost.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,9 +18,10 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime time;
+    @Column(name = "time")
+    private Instant time;
     @Column(name = "time_changed")
-    private LocalDateTime timeChanged;
+    private Instant timeChanged;
     @Column(name = "author_id")
     private UUID authorId;
     @Column(name = "comment_text")
@@ -46,4 +47,3 @@ public class Comment {
     )
     private List<Comment> comments;
 }
-

@@ -1,6 +1,11 @@
 package ru.skillbox.mcpost.service;
 
-import ru.skillbox.mcpost.config.MvcConfig;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
 import ru.skillbox.mcpost.dto.*;
 import ru.skillbox.mcpost.dto.criteria.CommentSearchCriteria;
 import ru.skillbox.mcpost.dto.criteria.PostSearchCriteria;
@@ -18,27 +23,19 @@ import ru.skillbox.mcpost.repository.CommentLikeRepository;
 import ru.skillbox.mcpost.repository.CommentRepository;
 import ru.skillbox.mcpost.repository.PostLikeRepository;
 import ru.skillbox.mcpost.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Principal;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final MvcConfig config;
+
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
@@ -47,33 +44,20 @@ public class PostService {
     private final TagMapper tagMapper;
     private final CommentMapper commentMapper;
 
-    public PhotoDto save(Principal principal,
-                         String type,
-                         MultipartFile file) {
-        UUID principalId = UUID.fromString(principal.getName());
-        String dir = config.getPath() + "/photo/" + principalId + "/";
-        String filePath = dir + file.getOriginalFilename();
-
-        try {
-            Path dirPath = Paths.get(dir);
-            if (Files.notExists(dirPath)) {
-                Files.createDirectories(dirPath);
-            }
-            file.transferTo(Paths.get(filePath));
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return new PhotoDto("/photo/" + principalId + "/" + file.getOriginalFilename());
-    }
-
-    public PostDto createPost(Principal principal, PostDto postDto) {
-        UUID principalId = UUID.fromString(principal.getName());
-        postDto.setAuthorId(principalId);
-        postDto.setTime(LocalDateTime.now());
-        postDto.setTimeChanged(LocalDateTime.now());
+    public PostDto createPost(Principal principal, PostRq postRq) {
+        PostDto postDto = new PostDto();
+        postDto.setAuthorId(UUID.fromString(principal.getName()));
+        postDto.setImagePath(postRq.getImagePath());
+        postDto.setPostText(postRq.getPostText());
+        postDto.setTitle(postRq.getTitle());
+        postDto.setTime(postRq.getTime());
+        postDto.setTimeChanged(postRq.getTimeChanged());
+        postDto.setPublishDate(postRq.getPublishDate());
+        postDto.setTags(
+                postRq.getTags() != null ? postRq.getTags().stream().map(tagMapper::toDto).collect(Collectors.toList()) : new ArrayList<>()
+        );
         postDto.setType(
-                postDto.getPublishDate() != null ? PostType.QUEUED : PostType.POSTED
+                postRq.getPublishDate() != null ? PostType.POSTED : PostType.QUEUED
         );
         postDto.setIsBlocked(false);
         postDto.setIsDeleted(false);
@@ -81,18 +65,19 @@ public class PostService {
     }
 
     public PostDto updatePost(PostDto postDto) {
-        Post post = getPostById(postDto.getId());
+        Post post = postMapper.toEntity(getPostById(postDto.getId()));
         post.setTitle(postDto.getTitle());
         post.setPostText(postDto.getPostText());
         post.setImagePath(postDto.getImagePath());
         post.setTags(tagMapper.toListEntity(postDto.getTags()));
         post.setPublishDate(postDto.getPublishDate());
-        post.setType(postDto.getPublishDate() != null ? PostType.QUEUED : PostType.POSTED);
-        post.setTimeChanged(LocalDateTime.now());
+        post.setType(postDto.getPublishDate() != null ? PostType.POSTED : PostType.QUEUED);
+        post.setTimeChanged(postDto.getTimeChanged());
         return postMapper.toDto(postRepository.save(post));
     }
 
     public PostsRs getPosts(PostSearchCriteria postSearchCriteria, String sort, Integer page, Integer size) {
+        publishPost();
         String[] sorts = sort.split(",");
         Page<Post> posts = postRepository.findAll(
                 postSearchCriteria.getSpecification(),
@@ -101,7 +86,7 @@ public class PostService {
                         size,
                         Sort.by(
                                 Sort.Direction.valueOf(sorts[1].toUpperCase()),
-                                sorts[0].equals("time") ? "publishDate" : sorts[1]
+                                sorts[0].equals("time") ? "timeChanged" : sorts[0]
                         )
                 )
         );
@@ -115,42 +100,48 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
-        Post post = getPostById(id);
+        Post post = postMapper.toEntity(getPostById(id));
         post.setIsDeleted(true);
         postRepository.save(post);
     }
 
-    private Post getPostById(Long id) {
-        return postRepository.findById(id)
+    public PostDto getPostById(Long id) {
+        return postMapper.toDto(postRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 MessageFormat.format("Пост с id: {0} не найден", id)
                         )
-                );
+                ));
     }
 
     public LikeDto createPostLike(Principal principal, Long postId, LikeDto likeDto) {
         UUID principalId = UUID.fromString(principal.getName());
         PostLike like = postLikeRepository.findByPostIdAndAuthorId(postId, principalId)
                 .orElse(
-                        PostLike.builder()
-                                .authorId(principalId)
+                        PostLike.builder().authorId(principalId)
                                 .postId(postId)
-                                .isDeleted(false)
                                 .build()
                 );
         like.setReactionType(ReactionType.valueOf(likeDto.getReactionType().toUpperCase()));
+        like.setIsDeleted(false);
         postLikeRepository.save(like);
         return likeDto;
     }
 
-    public CommentsRs getPostComments(Principal principal,
-                                      Long postId,
+    public PostDto removePostLike(Principal principal, Long postId) {
+        UUID authorId = UUID.fromString(principal.getName());
+        PostLike postLike = postLikeRepository.findByPostIdAndAuthorId(postId, authorId).orElseThrow();
+        postLike.setIsDeleted(true);
+        postLikeRepository.save(postLike);
+        return getPostById(postId);
+    }
+
+    public CommentsRs getPostComments(Long postId,
                                       String sort,
                                       Integer size,
                                       Integer page,
                                       Boolean isDeleted) {
-        String[] sorts = sort.split(",");
+        String[] sorts = sort != null ? sort.split(",") : new String[] {"time", "DESC"};
         Page<Comment> postComments = commentRepository.findAll(
                 new CommentSearchCriteria(postId, 0L, isDeleted).getSpecification(),
                 PageRequest.of(
@@ -176,13 +167,13 @@ public class PostService {
                 .commentText(commentRq.getCommentText())
                 .isBlocked(false)
                 .isDeleted(false)
-                .time(LocalDateTime.now())
-                .timeChanged(LocalDateTime.now())
+                .time(Instant.now())
+                .timeChanged(Instant.now())
                 .build();
         return commentMapper.toDto(commentRepository.save(comment));
     }
 
-    public CommentDto setCommentLike(Principal principal, Long postId, Long commentId) {
+    public CommentDto setCommentLike(Principal principal, Long commentId) {
         UUID authorId = UUID.fromString(principal.getName());
         CommentLike commentLike = commentLikeRepository
                 .findByAuthorIdAndCommentId(authorId, commentId)
@@ -190,7 +181,6 @@ public class PostService {
                         CommentLike.builder()
                                 .commentId(commentId)
                                 .authorId(authorId)
-                                .isDeleted(false)
                                 .build()
                 );
         commentLike.setReactionType(ReactionType.HEART);
@@ -199,7 +189,7 @@ public class PostService {
         return commentMapper.toDto(getCommentById(commentId));
     }
 
-    public CommentDto removeCommentLike(Principal principal, Long postId, Long commentId) {
+    public CommentDto removeCommentLike(Principal principal, Long commentId) {
         UUID authorId = UUID.fromString(principal.getName());
         CommentLike commentLike = commentLikeRepository
                 .findByAuthorIdAndCommentId(authorId, commentId)
@@ -211,7 +201,7 @@ public class PostService {
 
     public CommentsRs getCommentComments(Long postId, Long parentId, Integer page,
                                          Integer size, String sort, Boolean isDeleted) {
-        String[] sorts = sort.split(",");
+        String[] sorts = sort != null ? sort.split(",") : new String[] {"time", "DESC"};
         Page<Comment> commentComments = commentRepository.findAll(
                 new CommentSearchCriteria(postId, parentId, isDeleted).getSpecification(),
                 PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(sorts[1].toUpperCase()), sorts[0]))
@@ -225,7 +215,7 @@ public class PostService {
         );
     }
 
-    public void removeComment(Long postId, Long commentId) {
+    public void removeComment(Long commentId) {
         Comment comment = getCommentById(commentId);
         commentRepository.saveAll(
                 Stream.concat(Stream.of(comment), comment.getComments().stream())
@@ -241,5 +231,24 @@ public class PostService {
                                 MessageFormat.format("Комментайрий с id {0} не найден", commentId)
                         )
                 );
+    }
+
+    private void publishPost() {
+        postRepository.saveAll(
+                postRepository.findAll(getSpecification())
+                        .stream()
+                        .peek(post -> {
+                            post.setType(PostType.POSTED);
+                            post.setTimeChanged(Instant.now());
+                        })
+                        .toList()
+        );
+    }
+
+    private static Specification<Post> getSpecification() {
+        return Specification.allOf(
+                (root, query, cb) -> cb.equal(root.get("type"), PostType.QUEUED),
+                (root, query, cb) -> cb.lessThanOrEqualTo(root.get("publishDate"), Instant.now())
+        );
     }
 }

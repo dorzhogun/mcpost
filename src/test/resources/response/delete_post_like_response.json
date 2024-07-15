@@ -1,0 +1,16 @@
+{
+  "id": 2,
+  "authorId": "01784bc4-4dcc-4c91-b085-a5c71ae0184c",
+  "title": "title2",
+  "postText": "post_text2",
+  "publishDate": "2024-06-04T12:55:36Z",
+  "imagePath": "image_path2",
+  "tags": [],
+  "time": "2024-06-04T12:55:36Z",
+  "timeChanged": "2024-06-04T12:55:36Z",
+  "type": "POSTED",
+  "isBlocked": false,
+  "isDeleted": false,
+  "commentsCount": 1,
+  "likeAmount": 0
+}
