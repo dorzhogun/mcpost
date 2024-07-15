@@ -1,3 +1,13 @@
 spring:
   datasource:
     url: jdbc:postgresql://database:5432/postgres
+app:
+  feignClient:
+    url: http://89.104.68.220:8080
+
+eureka:
+  instance:
+    hostname: 89.104.68.220
+  client:
+    service-url:
+      defaultZone: http://89.104.68.220:8761/eureka

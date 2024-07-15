@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: server
+    active: local
   application:
     name: post
   datasource:
@@ -12,14 +12,12 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
   kafka:
     bootstrap-servers: 89.104.68.220:9094
-
 app:
   kafka:
     notificationTopic: "notification-top"
     kafkaMessageGroupId: "kafka-message-group-id"
   request-validation:
     validator-path: "http://89.104.68.220:8081/api/v1/auth/getclaims"
-
 eureka:
   instance:
     hostname: 89.104.68.220
@@ -27,6 +25,5 @@ eureka:
     service-url:
       defaultZone: http://89.104.68.220:8761/eureka
     enabled: true
-
 server:
   port: 8091
