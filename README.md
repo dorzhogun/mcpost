@@ -23,16 +23,18 @@ app.feignClient.url: URL Feign-клиента в серверном окруже
 eureka: конфигурация Eureka-клиента для серверного окружения
 ______________________
 **Запуск**
-Для запуска приложения в локальном окружении используйте профиль local:
+1. Для запуска приложения в локальном окружении используйте профиль local:
 ./gradlew bootRun -Dspring.profiles.active=local
-Для запуска в серверном окружении используйте профиль server:
+2. Для запуска в серверном окружении используйте профиль server:
 ./gradlew bootRun -Dspring.profiles.active=server
 _______________________
 **Зависимости**
-Spring Boot
-Spring Data JPA
-Spring Kafka
-Spring Security
-Liquibase
-Feign
-Eureka
++ Spring Boot
++ Spring Data JPA
++ Spring Kafka
++ Spring Security
++ Liquibase
++ Feign
++ Eureka
++ Gateway
++ TeamCity
