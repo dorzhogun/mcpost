@@ -8,23 +8,23 @@ ________________________
 Приложения находится в файлах: *application.yaml, application-local.yaml и application-server.yaml*.
 ________________________
 * application.yaml
-** spring.profiles.active: активный профиль (можно запускать как на сервере "server", так и локально "local")
-** spring.application.name: post
-** spring.datasource: конфигурация подключения к базе данных PostgreSQL
-** spring.liquibase: включение Liquibase для управления миграциями базы данных
-** spring.kafka: конфигурация Kafka, включая адрес брокера и топик для уведомлений
-** app.kafka: дополнительные настройки Kafka, включая название топика и группу сообщений
-** server.port: порт, на котором будет запущен сервер
+  + spring.profiles.active: активный профиль (можно запускать как на сервере "server", так и локально "local")
+  + spring.application.name: post
+  + spring.datasource: конфигурация подключения к базе данных PostgreSQL
+  + spring.liquibase: включение Liquibase для управления миграциями базы данных
+  + spring.kafka: конфигурация Kafka, включая адрес брокера и топик для уведомлений
+  + app.kafka: дополнительные настройки Kafka, включая название топика и группу сообщений
+  + server.port: порт, на котором будет запущен сервер
 _________________________
 * application-local.yaml
-** spring.datasource.url: URL подключения к локальной базе данных PostgreSQL
-** app.feignClient.url: URL локального Feign-клиента
-** eureka: конфигурация Eureka-клиента для локального окружения
+  + spring.datasource.url: URL подключения к локальной базе данных PostgreSQL
+  + app.feignClient.url: URL локального Feign-клиента
+  + eureka: конфигурация Eureka-клиента для локального окружения
 _________________________
 * application-server.yaml
-** spring.datasource.url: URL подключения к базе данных PostgreSQL в серверном окружении
-** app.feignClient.url: URL Feign-клиента в серверном окружении (ip адрес сервера)
-** eureka: конфигурация Eureka-клиента для серверного окружения
+  + spring.datasource.url: URL подключения к базе данных PostgreSQL в серверном окружении
+  + app.feignClient.url: URL Feign-клиента в серверном окружении (ip адрес сервера)
+  + eureka: конфигурация Eureka-клиента для серверного окружения
 ______________________
 **Запуск**
 1. Для запуска приложения в локальном окружении используйте профиль local:
